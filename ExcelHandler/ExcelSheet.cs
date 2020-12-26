@@ -45,7 +45,7 @@ namespace ExcelHandler
         {
             GC.Collect();
             GC.WaitForPendingFinalizers();
-            
+
             if (range != null)
                 Marshal.ReleaseComObject(range);
             if (sheet != null)
@@ -103,7 +103,7 @@ namespace ExcelHandler
                 {
                     return range.Cells[row, column].Value2;
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     throw e;
                 }
@@ -127,7 +127,20 @@ namespace ExcelHandler
         /// 데이터 타입은 모두 Object타입으로 반환한다
         /// </summary>
         /// <returns>반환된 데이터테이블</returns>
-        public DataTable GetFullDataTable()
+        public DataTable GetFullDataTable_Sync()
+        {
+            DataTable ret = new DataTable();
+
+
+            return ret;
+        }
+
+        /// <summary>
+        /// 해당 시트의 모든 데이터를 DataTable로 만들어 반환한다
+        /// 데이터 타입은 모두 Object타입으로 반환한다
+        /// </summary>
+        /// <returns>반환된 데이터테이블</returns>
+        public DataTable GetFullDataTable_Async()
         {
             DataTable ret = new DataTable();
 
@@ -135,7 +148,7 @@ namespace ExcelHandler
             // 작업 끝나면 Merge (async - await 활용)
 
             return ret;
-        }
+        } 
 
         /// <summary>
         /// 첫번째 열을 컬럼 이름으로 하는 컬럼 이름 리스트를 반환한다
