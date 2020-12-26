@@ -13,6 +13,43 @@ namespace ExcelHandler
 {
     public sealed class ExcelSheet
     {
+
+        private string originFilePath;
+        private Excel.Application app;
+        private Excel.Workbook book;
+        private Excel.Worksheet sheet;
+        private Excel.Range range;
+
+        public ExcelSheet(string excelFile, int sheetNum = 1)
+        {
+            ValidatePath(excelFile);
+
+            originFilePath = excelFile;
+            app = new Excel.Application();
+            book = app.Workbooks.Open(excelFile);
+
+            if (sheetNum < 1 || sheetNum > book.Sheets.Count)
+                throw new InvalidConstructionException("Invalid Sheet Number");
+
+            sheet = book.Sheets[sheetNum];
+            range = sheet.UsedRange;
+        }
+
+        ~ExcelSheet()
+        {
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+
+            Marshal.ReleaseComObject(range);
+            Marshal.ReleaseComObject(sheet);
+
+            book.Close();
+            Marshal.ReleaseComObject(book);
+
+            app.Quit();
+            Marshal.ReleaseComObject(app);
+        }
+
         public int RowsCount { get => range.Rows.Count; }
         public int ColumnsCount { get => range.Columns.Count; }
         public int DataCellCount
@@ -56,44 +93,6 @@ namespace ExcelHandler
             }
         }
 
-        private string originFilePath;
-
-        private Excel.Application app;
-        private Excel.Workbook book;
-        private Excel.Worksheet sheet;
-        private Excel.Range range;
-
-
-        public ExcelSheet(string excelFile, int sheetNum = 1)
-        {
-            ValidatePath(excelFile);
-
-            originFilePath = excelFile;
-            app = new Excel.Application();
-            book = app.Workbooks.Open(excelFile);
-
-            if (sheetNum < 1 || sheetNum > book.Sheets.Count)
-                throw new InvalidConstructionException("Invalid Sheet Number");
-
-            sheet = book.Sheets[sheetNum];
-            range = sheet.UsedRange;
-        }
-
-        ~ExcelSheet()
-        {
-            GC.Collect();
-            GC.WaitForPendingFinalizers();
-
-            Marshal.ReleaseComObject(range);
-            Marshal.ReleaseComObject(sheet);
-
-            book.Close();
-            Marshal.ReleaseComObject(book);
-
-            app.Quit();
-            Marshal.ReleaseComObject(app);
-        }
-
         public DataTable GetFullDataTable()
         {
             DataTable ret = new DataTable();
@@ -117,7 +116,12 @@ namespace ExcelHandler
             return ret;            
         }
 
-        public void Save(string filePath)
+        public void Save()
+        {
+
+        }
+
+        public void SaveAs(string filePath)
         {
             ValidatePath(filePath);
 
