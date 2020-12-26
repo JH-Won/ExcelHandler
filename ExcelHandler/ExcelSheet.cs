@@ -15,6 +15,18 @@ namespace ExcelHandler
     {
         public int RowsCount { get => range.Rows.Count; }
         public int ColumnsCount { get => range.Columns.Count; }
+        public int DataCellCount
+        {
+            get
+            {
+                int cnt = 0;
+                for (int i = 1; i <= RowsCount; i++)
+                    for (int j = 1; j <= ColumnsCount; j++)
+                        if (!(this[i, j] == null) && !string.IsNullOrEmpty(this[i, j].ToString()))
+                            cnt++;
+                return cnt;
+            }
+        }
 
         public object this[int row, int column]
         {
@@ -23,7 +35,7 @@ namespace ExcelHandler
                 ValidateIndex(row, column);
                 try
                 {
-                    return range.Cells[row, column];
+                    return range.Cells[row, column].Value2;
                 }
                 catch(Exception e)
                 {
@@ -54,7 +66,17 @@ namespace ExcelHandler
 
         public ExcelSheet(string excelFile, int sheetNum = 1)
         {
+            ValidatePath(excelFile);
+
             originFilePath = excelFile;
+            app = new Excel.Application();
+            book = app.Workbooks.Open(excelFile);
+
+            if (sheetNum < 1 || sheetNum > book.Sheets.Count)
+                throw new InvalidConstructionException("Invalid Sheet Number");
+
+            sheet = book.Sheets[sheetNum];
+            range = sheet.UsedRange;
         }
 
         ~ExcelSheet()
@@ -84,12 +106,15 @@ namespace ExcelHandler
 
         public IList<string> GetColumnNames(bool isHeaderColumn = true)
         {
+            List<string> ret = new List<string>();
+
             if (isHeaderColumn)
             {
-
+                for (int i = 1; i <= ColumnsCount; i++)
+                    ret.Add(this[1, i].ToString());
             }
 
-            return new List<string>();
+            return ret;            
         }
 
         public void Save(string filePath)
