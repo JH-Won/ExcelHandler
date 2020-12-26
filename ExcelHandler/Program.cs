@@ -68,7 +68,7 @@ namespace ExcelHandler
             }
             timer.Stop();
             Console.WriteLine("...Done!");
-            Console.WriteLine($"time elapsed to convert DataTable : {timer.ElapsedMilliseconds} ms");
+            Console.WriteLine($"time elapsed to convert DataTable : {timer.ElapsedMilliseconds} ms (Rows: {sheet.RowsCount}, Columns: {sheet.ColumnsCount}, Cells: {sheet.RowsCount * sheet.ColumnsCount})");
 
             AskKeyToExit();
         }
