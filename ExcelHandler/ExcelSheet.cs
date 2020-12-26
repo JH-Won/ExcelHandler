@@ -13,7 +13,6 @@ namespace ExcelHandler
 {
     public sealed class ExcelSheet
     {
-
         private string originFilePath;
         private Excel.Application app;
         private Excel.Workbook book;
@@ -46,15 +45,22 @@ namespace ExcelHandler
         {
             GC.Collect();
             GC.WaitForPendingFinalizers();
+            
+            if (range != null)
+                Marshal.ReleaseComObject(range);
+            if (sheet != null)
+                Marshal.ReleaseComObject(sheet);
 
-            Marshal.ReleaseComObject(range);
-            Marshal.ReleaseComObject(sheet);
-
-            book.Close();
-            Marshal.ReleaseComObject(book);
-
-            app.Quit();
-            Marshal.ReleaseComObject(app);
+            if (book != null)
+            {
+                book.Close();
+                Marshal.ReleaseComObject(book);
+            }
+            if (app != null)
+            {
+                app.Quit();
+                Marshal.ReleaseComObject(app);
+            }
         }
 
         /// <summary>
