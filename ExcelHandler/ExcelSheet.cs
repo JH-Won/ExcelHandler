@@ -118,21 +118,14 @@ namespace ExcelHandler
 
         public void Save()
         {
-
+            this.book.Save();
         }
 
         public void SaveAs(string filePath)
         {
             ValidatePath(filePath);
 
-            try
-            {
-                // 저장한다
-            }
-            catch(Exception e)
-            {
-                throw e;
-            }
+            this.book.SaveAs(filePath);
         }
 
         private void ValidatePath(string filePath)
