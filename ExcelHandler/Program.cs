@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Diagnostics;
 using System.Data;
+using System.IO;
 
 namespace ExcelHandler
 {
@@ -14,6 +15,7 @@ namespace ExcelHandler
         {
             Console.WriteLine("Program Start");
             string file = Console.ReadLine();
+            file.Trim();
                 
             Stopwatch timer = new Stopwatch();
             ExcelSheet sheet = null;
@@ -38,24 +40,30 @@ namespace ExcelHandler
             Console.WriteLine($"Colunms       : {sheet.ColumnsCount}");
             Console.WriteLine($"Not null data : {sheet.RowsCount}");
 
-            Console.Write($"Column Names(Header) : {sheet.RowsCount}");
+            Console.Write($"Column Names(Header) : ");
             foreach (var col in sheet.GetColumnNames())
             {
                 Console.Write($"{col}, ");
             }
 
-            for (int i = 0; i < sheet.RowsCount; i++) 
+            for (int i = 1; i <= sheet.RowsCount; i++) 
             {
-                for (int j = 0; j < sheet.ColumnsCount; j++)
+                if (i >= 10)
                 {
-                    Console.Write(sheet[i, j] + "\t");
+                    Console.WriteLine("---------------------------------------sample 10 rows---------------------------------------");
+                    break;
                 }
-                Console.WriteLine();
+
+                for (int j = 1; j <= sheet.ColumnsCount; j++)
+                {
+                    Console.WriteLine(sheet[i, j] + ":\t" + sheet[i, j].GetType());
+                }
+                Console.WriteLine("\n");
             }
 
             Console.WriteLine("Converting DataTable...");
             timer.Start();
-            using(DataTable dt = sheet.GetFullDataTable())
+            using(DataTable dt = sheet.GetFullDataTable_Sync())
             {               
             }
             timer.Stop();
